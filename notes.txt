@@ -137,3 +137,107 @@ Source control
 -------------------------------
 dotnet new gitignore
 VSCode > Source Control > [right-click-file] > Add to gitignore
+
+
+Help!! I'm Stuck
+----------------
+Dont panic
+Rule out the basics first
+dotnet watch is really unreliable
+Restart the server!
+Reproduce the problem
+Typos!
+Version issues
+
+Gather information
+Check logs
+Chrome dev tools
+Debugger
+
+Research
+Search engine
+AI (ChatGPT, CoPilot etc)
+Compare with known working code
+(https://github.com/trycatchlearn/)
+
+
+Getting Help
+------------
+Be specific about the problem
+Screenshots
+Code snippets
+What you have tried so far
+What research you have done
+
+
+Section 3
+---------
+Application architecture
+The Repository Pattern
+Seeding Data
+Migrations and Startup
+
+API
+| | Controllers
+  | Startup
+| | Middleware
+  |
+| ⌄ 
+  Infrastructure
+| | | | Repository
+  | | | DbContext
+| | | | Services
+  | | ⌄ 
+| | | Stripe
+  | ⌄
+⌄ ⌄ Database
+Core
+  Entities
+  Interfaces
+
+The Repository Pattern - Goals
+* Decouple business code from data access
+* Separation of conerns
+* Minimise duplicate query logic
+* Testability
+
+The Repository Pattern - Why we use it?
+* Avoid messy controllers
+* Simplified testing
+* Increased abstraction
+* Mainteainability
+* Reduced duplicate code
+
+The Reporsitory Pattern - Downsides
+* Abstraction of an abstraction
+* Optimisation challenges
+
+The Repository Pattern
+1. Inject repository interface into the controller
+2. Gives us access to the GetProducts() or GetProduct(int id)
+3. That's the method we call from the controller
+4. From there that's where we do inject the DbContext and we can use _context.Products.ToList()
+5. Our DbContext translates _context.Products.ToList() into SQL via the EntityFrameworkProvider
+6. Data is returned back to our Repository > Controller > ApiController > Client who requested it
+                                                  
+                                                 (3)
+                                +------------+   +---------------+       (6)
+      +---------------------->> | Controller |   | GetProducts() |<<-------------+
+      |                         +------------+   +---------------+               |
+      |                                                  ⌄                       |
+      |                      (4)                         ⌄                       |
+    +-------------------+       +------------+   +----------------------------+  |
+(1) | IRepository       |   +->>| Repository |   | _context.Products.ToList() |--+
+    |                   |   |   +------------+   +----------------------------+
+(2) | GetProducts()     |   |                            ⌄                   ^
+    | GetProduct(int id)|   |                     (5)    ⌄                   ^
+    +-------------------+   |                            ⌄                   |
+                            |   +-----------+    +------------------------+  |
+                            +---| DbContext |    | SELECT * FROM PRODUCTS |--+
+                                +-----------+    +------------------------+
+
+
+
+
+
+
