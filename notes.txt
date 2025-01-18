@@ -1,0 +1,139 @@
+Build a proof of concept e-commerce store using Angular, .Net and Stripe for payment processing
+-----------------------------------------------------------------------------------------------
+
+
+Creating the project structure
+------------------------------
+dotnet -h
+dotnet new list
+dotnet new sln
+dotnet new webapi -o API -controllers
+dotnet new classlib -o Core
+dotnet new classlib -o Infrastructure
+dotnet sln add API
+dotnet sln add Core
+dotnet sln add Infrastructure
+dotnet sln list
+cd .\API\
+dotnet add reference ..\Infrastructure\
+cd ..\Infrastructure\
+dotnet add reference ..\Core\
+cd ../
+dotnet restore
+dotnet build
+
+
+Configuring development launch settings
+---------------------------------------
+{
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "http": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "applicationUrl": "http://localhost:5000;https://localhost:5001",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
+
+
+Remember watch doesn't work 100% well
+-------------------------------------
+dotnet watch
+dotnet run
+
+
+Adding nuget packages (vscode extension in terminal tab)
+--------------------------------------------------------
+Infrastructure	+ Microsoft.EntityFrameworkCore.SqlServer @Microsoft 8.0.6
+API		+ Microsoft.EntityFrameworkCore.Design @Microsoft 8.0.6
+
+
+Removing swagger
+----------------
+using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+
+builder.Services.AddControllers();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+
+app.MapControllers();
+
+app.Run();
+
+
+Creating a docker-compose.yml file to run mssql server
+------------------------------------------------------
+services:
+  sql:
+    image: mcr.microsoft.com/azure-sql-edge
+    environment:
+      ACCEPT_EULA: "1"
+      MSSQL_SA_PASSWORD: "Password@1"
+    ports:
+      - "1433:1433"
+
+
+Running the docker container
+----------------------------
+docker compose up -d
+
+
+Adding the connection string to development launch settings
+-----------------------------------------------------------
+,
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=localhost,1433;Database=skinet;User Id=SA;Password=Password@1;TrustServerCertificate=True"
+  }
+
+
+Installing entity framework migrations cli utility
+--------------------------------------------------
+https://www.nuget.org/packages/dotnet-ef
+dotnet tool install --global dotnet-ef --version 8.0.6
+dotnet ef
+
+
+Managing migrations using entity framework cli
+----------------------------------------------
+dotnet ef migrations add InitialCreate -s API -p Infrastructure/
+dotnet ef migrations remove -s API -p Infrastructure/
+dotnet ef database update -s API -p Infrastructure
+
+
+Install the VSCode extension SQL Server by Microsoft.com
+--------------------------------------------------------
+Create new connection and use the connection string "Server=localhost,1433;Database=skinet;User Id=SA;Password=Password@1;TrustServerCertificate=True"
+
+
+Postman is cool
+---------------
+Collections can hold variables for the {{url}} e.g. https://lcoalhost:5001
+Requests can use the variables {{url}}/api/products
+Body request variables are also available https://learning.postman.com/docs/tests-and-scripts/write-scripts/variables-list/
+{
+    "name": "{{$randomProduct}}",
+    "description": "{{$randomLoremParagraph}}",
+    "price": {{$randomPrice}},
+    "pictureUrl": "{{$randomImageUrl}}",
+    "type": "Some type",
+    "brand": "Some brand",
+    "quantityInStock": {{$randomInt}}
+}
+
+
+Source control
+-------------------------------
+dotnet new gitignore
+VSCode > Source Control > [right-click-file] > Add to gitignore
