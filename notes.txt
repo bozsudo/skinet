@@ -110,7 +110,7 @@ Managing migrations using entity framework cli
 dotnet ef migrations add InitialCreate -s API -p Infrastructure/
 dotnet ef migrations remove -s API -p Infrastructure/
 dotnet ef database update -s API -p Infrastructure
-
+dotnet ef database drop -p Infrastructure -s API
 
 Install the VSCode extension SQL Server by Microsoft.com
 --------------------------------------------------------
@@ -237,7 +237,21 @@ The Repository Pattern
                                 +-----------+    +------------------------+
 
 
-
+Seeding and Migrating on Startup
+--------------------------------
+try
+{
+    using var scope = app.Services.CreateScope();
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<StoreContext>();
+    await context.Database.MigrateAsync();
+    await StoreContextSeed.SeedAsync(context);
+}
+catch (System.Exception ex)
+{
+    Console.WriteLine(ex);
+    throw;
+}
 
 
 
