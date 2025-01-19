@@ -254,4 +254,51 @@ catch (System.Exception ex)
 }
 
 
+The Specification Pattern
+-------------------------
+
+Generic repository is an anti-pattern!
+* Why is it considered an anti-pattern?
+  Answer? 
+  1. Providing a generic expression exposes the entire dataset through a method which could cause incredibly inefficient queries. 
+     The goal is the encapsulate not expose (leaky abstraction).
+     The method is too generic.
+public interface IRepository<T>
+{
+  IReadOnlyList<T> ListAllAsync();
+  IReadOnlyList<T> FindAsync(Expression<Func<T, bool>> query);
+  T GetByID(int id);                       ^
+  void Add(T item);                        ^
+  void Update(T item);                (1)  ^
+  void Delete(T item);              +-----------------------------+
+}                                   | Generic expression e.g.     |
+                                    |                             |
+                                    | x => x.Name.Contains("red") |
+                                    +-----------------------------+
+
+The spcification pattern to the rescue!
+* Describes a query in an object
+* Returns an IQueryable<T>
+* Generic List method takes specification as parameter
+* Specification can have meaningful name
+  * OrdersWithItemsAndSortingSpecification
+
+Overview
+1. Specification passed as parameter to ListAsync
+2. Passes the spec to an Evaluator class to build up an expression tree
+3. Returns an IQueryable of type T that the async method can use to query the database
++---------------------+
+| Specification Class |
+|                     |             Generic Repository
+| I need all products |  (1)   +--------------------------+
+| that have a brand   |------>>| ListAsync(specification) | 
+| of 'react' and are  |        +--------------------------+
+| a type of 'gloves'  |          (2)   ^         ^ (3)
++---------------------+         spec   ^         ^ IQueryable<T>
+                                       ^         ^
+                                   +-----------------+
+                                   | Evaluator Class |
+                                   +-----------------+
+
+
 
