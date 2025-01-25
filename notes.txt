@@ -300,5 +300,26 @@ Overview
                                    | Evaluator Class |
                                    +-----------------+
 
-
-
+Creating the Angular client
+------------------------------
+node --version
+v20.18.2
+npm --version
+10.8.2
+npm install -g @angular/cli@18
+ng version
+Angular CLI: 18.2.12
+Node: 20.18.2
+Package Manager: npm 10.8.2
+OS: win32 x64
+Package                      Version
+------------------------------------------------------
+@angular-devkit/architect    0.1802.12 (cli-only)
+@angular-devkit/core         18.2.12 (cli-only)
+@angular-devkit/schematics   18.2.12 (cli-only)
+@schematics/angular          18.2.12 (cli-only)
+ng new client
+? Which stylesheet format would you like to use? CSS
+? Do you want to enable Server-Side Rendering (SSR) and Static Site Generation (SSG/Prerendering)? no
+cd client
+ng serve
