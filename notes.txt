@@ -323,3 +323,88 @@ ng new client
 ? Do you want to enable Server-Side Rendering (SSR) and Static Site Generation (SSG/Prerendering)? no
 cd client
 ng serve
+
+
+Creating localhost certificates
+-------------------------------
+Development-Root-CA
+%LOCALAPPDATA%\Programs\Git\usr\bin\openssl.exe
+
+mkdir %LOCALAPPDATA%\mkcert
+%LOCALAPPDATA%\Programs\Git\usr\bin\openssl.exe
+openssl genrsa -out rootCA.key 2048
+openssl req -x509 -new -nodes -key rootCA.key -sha256 -days 3650 -out rootCA.crt -subj "/C=UK/ST=State/L=City/O=MyCompany/CN=Development-Root-CA"
+openssl genrsa -out localhost.key 2048
+openssl req -new -key localhost.key -out localhost.csr -subj "/C=UK/ST=State/L=City/O=MyCompany/CN=localhost"
+
+localhost.ext
+authorityKeyIdentifier=keyid,issuer
+basicConstraints=CA:FALSE
+keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = localhost
+
+openssl x509 -req -in localhost.csr -CA rootCA.crt -CAkey rootCA.key -CAcreateserial -out localhost.crt -days 3650 -sha256 -extfile localhost.ext
+rootCA.crt
+
+"Install Certificate"
+"Local Machine" > "Place all certificates in the following store" > "Trusted Root Certification Authorities"
+"Yes"
+
+copy localhost.crt C:\github\bozsudo\skinet\client\ssl\localhost.crt
+copy localhost.key C:\github\bozsudo\skinet\client\ssl\localhost.key
+
+angular.json
+"serve": {
+  "builder": "@angular-devkit/build-angular:dev-server",
+    "options": {
+      "ssl": true,
+      "sslCert": "ssl/localhost.crt",
+      "sslKey": "ssl/localhost.key"
+    },
+}
+
+
+Installing Angular packages
+---------------------------
+ng add @angular/material@18.0.6
+"Yes"
+"No"
+
+
+Installing Tailwindcss
+----------------------
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init
+
+tailwind.config.js
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    "./src/**/*.{html,ts}",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+
+style.css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+Install VS Code extension
+-------------------------
+Angualr Language Service
+
+
+Install VS Code extension
+-------------------------
+Tailwind CSS IntelliSense
+
+
