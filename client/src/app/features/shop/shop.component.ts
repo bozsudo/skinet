@@ -30,7 +30,7 @@ import { FormsModule } from '@angular/forms';
     FormsModule
 ],
   templateUrl: './shop.component.html',
-  styleUrl: './shop.component.css'
+  styleUrl: './shop.component.scss'
 })
 export class ShopComponent implements OnInit {
   private shopService = inject(ShopService);

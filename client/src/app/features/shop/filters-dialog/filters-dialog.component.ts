@@ -17,7 +17,7 @@ import { FormsModule } from '@angular/forms';
     FormsModule
   ],
   templateUrl: './filters-dialog.component.html',
-  styleUrl: './filters-dialog.component.css'
+  styleUrl: './filters-dialog.component.scss'
 })
 export class FiltersDialogComponent {
   shopService = inject(ShopService);
